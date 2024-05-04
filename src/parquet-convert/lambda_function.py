@@ -11,7 +11,6 @@ def lambda_handler(event, context):
     
     target_bucket = 'cleaned-parquet-bucket'
     target_file_name = object_key[:-5]
-    
    
     waiter = s3_client.get_waiter('object_exists')
     waiter.wait(Bucket=source_bucket, Key=object_key)
@@ -40,7 +39,6 @@ def lambda_handler(event, context):
     bucket_name = target_bucket
     object_key = f"{target_file_name}.csv"
     s3_client.put_object(Bucket=bucket_name, Key=object_key, Body=csv_data)
-    
     
     return {
         'statusCode': 200,
