@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     
     target_bucket = 'cleaned-parquet-bucket'
     target_file_name = object_key[:-5]
-    print(target_file_name)
+    
    
     waiter = s3_client.get_waiter('object_exists')
     waiter.wait(Bucket=source_bucket, Key=object_key)
@@ -29,8 +29,7 @@ def lambda_handler(event, context):
         f.append(i)
     df = pd.DataFrame(f)
     # Select specific columns
-    selected_columns = ['bathrooms', 'bedrooms', 'city', 'homeStatus', 
-                    'homeType','livingArea','price', 'rentZestimate','zipcode']
+    selected_columns = []
     df = df[selected_columns]
     print(df)
     
