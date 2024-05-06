@@ -24,20 +24,20 @@ def lambda_handler(event, context):
     data = json.loads(data)
     print(data)
     f = []
-    for i in data["results"]:
+    for i in data["jobs"]:
         f.append(i)
     df = pd.DataFrame(f)
     # Select specific columns
-    selected_columns = []
-    df = df[selected_columns]
+    selected_columns = ["jobSlug","jobTitle","companyName","jobIndustry","jobType","jobGeo","jobLevel","jobDescription","pubDate"]
+    df = df[selected_columns] 
     print(df)
     
     # Convert DataFrame to CSV format
-    csv_data = df.to_csv(index=False)
+    csv_data = df.to_parquet(index=False)
     
     # Upload CSV to S3
     bucket_name = target_bucket
-    object_key = f"{target_file_name}.csv"
+    object_key = f"{target_file_name}.parquet"
     s3_client.put_object(Bucket=bucket_name, Key=object_key, Body=csv_data)
     
     return {
