@@ -8,6 +8,10 @@ def lambda_handler(event, context):
     source_bucket = event["Records"][0]["s3"]["bucket"]["name"]
     target_item = event["Records"][0]["s3"]["object"]["key"]
     
+    # A bucket with this name must be created beforehand
+    target_bucket = 'clean-parquet-bucket'
+
+    
     response = s3_client.get_object(Bucket=source_bucket, Key=target_item)
     data = response['Body'].read().decode('utf-8')
     data = json.loads(data)
