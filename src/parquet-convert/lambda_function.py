@@ -1,46 +1,33 @@
+import pandas as pd
+import awswrangler as wr
 import boto3
 import json
-import pandas as pd
 
 s3_client = boto3.client('s3')
-
 def lambda_handler(event, context):
-    # TODO implement
-    source_bucket = event['Records'][0]['s3']['bucket']['name']
-    object_key = event['Records'][0]['s3']['object']['key']
+    source_bucket = event["Records"][0]["s3"]["bucket"]["name"]
+    target_item = event["Records"][0]["s3"]["object"]["key"]
     
-    target_bucket = 'cleaned-parquet-bucket'
-    target_file_name = object_key[:-5]
-   
-    waiter = s3_client.get_waiter('object_exists')
-    waiter.wait(Bucket=source_bucket, Key=object_key)
-    
-    response = s3_client.get_object(Bucket=source_bucket, Key=object_key)
-    print(response)
-    data = response['Body']
-    print(data)
+    response = s3_client.get_object(Bucket=source_bucket, Key=target_item)
     data = response['Body'].read().decode('utf-8')
-    print(data)
     data = json.loads(data)
-    print(data)
-    f = []
-    for i in data["jobs"]:
-        f.append(i)
-    df = pd.DataFrame(f)
-    # Select specific columns
-    selected_columns = ["jobSlug","jobTitle","companyName","jobIndustry","jobType","jobGeo","jobLevel","jobDescription","pubDate"]
-    df = df[selected_columns] 
-    print(df)
     
-    # Convert DataFrame to CSV format
-    csv_data = df.to_parquet(index=False)
+    df = pd.DataFrame(data["jobs"])
+
+    selected_columns = ["jobSlug", "jobTitle", "companyName", "jobIndustry",
+                        "jobType", "jobGeo", "jobLevel", "jobDescription", "pubDate"]
+
+    df = df[selected_columns]
     
-    # Upload CSV to S3
-    bucket_name = target_bucket
-    object_key = f"{target_file_name}.parquet"
-    s3_client.put_object(Bucket=bucket_name, Key=object_key, Body=csv_data)
-    
+    #The bucket will be partitioned as follows
+    #s3://{bucket_name}/{year}/{month}/{day}/{file_name}.parquet
+    key_path = f"{target_bucket}/{target_item[-15:-11]}/{target_item[-17:-15]}/{target_item[-19:-17]}/{target_item[:-20]}.parquet"
+
+    wr.s3.to_parquet(df=df, path=f"s3://{key_path}")
+
+    parquet_data = df.to_parquet(index=False)
+
     return {
         'statusCode': 200,
-        'body': json.dumps('CSV conversion and S3 upload completed successfully')
+        'body': json.dumps('File converted to parquet successfully!')
     }
