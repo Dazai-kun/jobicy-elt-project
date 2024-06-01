@@ -4,7 +4,7 @@ The purpose of this project is to create a simple ELT pipeline on AWS.
 It extracts daily job post data from [Jobicy](https://jobicy.com/), loads the raw json files into an s3 bucket. It then creates DataFrames from the JSON files and converts them into parquet format. The converted parquet files are then loaded into another s3 bucket and are partitioned by day, month, and year. 
 
 **Tech stack:**
-* Lambda function
+* AWS Lambda
 * S3 bucket
 * Amazon EventBridge
 
