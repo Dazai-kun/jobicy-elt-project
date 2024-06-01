@@ -6,20 +6,8 @@ from requests_ip_rotator import ApiGateway, ip_rotator
 import os
 
 
-
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_REGION = os.environ.get('AWS_REGION')
-
-
 # Initialize S3 client
-s3 = boto3.client('s3' 
-                  ,aws_access_key_id=AWS_ACCESS_KEY_ID,
-                  aws_secret_access_key= AWS_SECRET_ACCESS_KEY,
-                  region_name=AWS_REGION
-                )
-
-
+s3 = boto3.client('s3')
 
 industry_list = ['business','copywriting','supporting','data-science',
             'design-multimedia','admin','accounting-finance','hr','marketing',
@@ -29,12 +17,10 @@ industry_list = ['business','copywriting','supporting','data-science',
 dt_string = datetime.now().strftime("%d%m%Y%H%M%S")
 
 
-def handler(event, context):
+def lambda_handler(event, context):
     
     site_url = 'https://jobicy.com/'
-    gateway =ApiGateway(site_url, regions= ip_rotator.DEFAULT_REGIONS 
-                        ,access_key_id=AWS_ACCESS_KEY_ID, access_key_secret=AWS_SECRET_ACCESS_KEY
-                        )
+    gateway =ApiGateway(site_url, regions=ip_rotator.DEFAULT_REGIONS)
     
     gateway.start(force=True)
     session = requests.Session()
