@@ -10,7 +10,7 @@ It extracts daily job post data from [Jobicy](https://jobicy.com/), loads the ra
 
 Here's the visualization of the project:
 
-!(./../image/Pasted image 20240601134546.png)
+![jobicy-elt-viz](https://github.com/Dazai-kun/my-project/blob/fb70aa3002080189f4a5b2b0e8f29132a8d61cdf/image/Pasted%20image%2020240601134546.png)
 ### Why on AWS and not on-premise?
 
 I want to have a simple serverless ELT that is automatically triggered based on a set schedule without me having to leave my laptop on 24/7. 
